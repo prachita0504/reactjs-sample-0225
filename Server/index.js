@@ -3,14 +3,33 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
-const cors = require("cors");
+
 const { z } = require("zod");
 const Todo = require("./module/Todos");
 const User = require("./module/User");
 const Book = require("./module/Books");
 
 const app = express();
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+const cors = require("cors");
+
+const allowedOrigins = [
+  "http://localhost:5173",  // Local development
+  "https://task-all109e91-prachita-singhs-projects.vercel.app", // Vercel frontend
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 
