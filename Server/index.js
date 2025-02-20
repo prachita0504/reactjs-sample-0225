@@ -1,7 +1,6 @@
 require("dotenv").config();
 const express = require("express");
 const bcrypt = require("bcryptjs");
-
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -106,7 +105,7 @@ const auth = (req, res, next) => {
   }
 };
 
-//todo
+
 app.post("/todo", auth, async (req, res) => {
   const schema = z.object({
     title: z.string().min(1).max(200),

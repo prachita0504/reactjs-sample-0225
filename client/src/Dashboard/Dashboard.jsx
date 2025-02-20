@@ -14,7 +14,7 @@ const Dashboard = () => {
           return;
         }
 
-        const response = await fetch("http://localhost:3000/dashboard", {
+        const response = await fetch("https://taskm-2-l0zo.onrender.com/dashboard", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,

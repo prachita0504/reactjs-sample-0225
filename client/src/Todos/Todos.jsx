@@ -16,7 +16,7 @@ const Todos = () => {
 
   const fetchTodos = async () => {
     try {
-      const { data } = await axios.get("http://localhost:3000/todos", {
+      const { data } = await axios.get("https://taskm-2-l0zo.onrender.com/todos", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTasks(data);
@@ -36,7 +36,7 @@ const Todos = () => {
 
     try {
       await axios.post(
-        "http://localhost:3000/todo",
+        "https://taskm-2-l0zo.onrender.com/todo",
         { title: task, body: body },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -55,7 +55,7 @@ const Todos = () => {
   // Delete Todo
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/todos/${id}`, {
+      await axios.delete(`https://taskm-2-l0zo.onrender.com/todos/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMessage("Task deleted successfully! ");
@@ -80,7 +80,7 @@ const Todos = () => {
 
     try {
       await axios.put(
-        `http://localhost:3000/todos/${id}`,
+        `https://taskm-2-l0zo.onrender.com/todos/${id}`,
         { title: newTitle, body: newBody },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -97,7 +97,7 @@ const Todos = () => {
   const handleCheckboxChange = async (id, isDone) => {
     try {
       await axios.put(
-        `http://localhost:3000/todos/${id}`,
+        `https://taskm-2-l0zo.onrender.com/todos/${id}`,
         { done: !isDone },
         { headers: { Authorization: `Bearer ${token}` } }
       );

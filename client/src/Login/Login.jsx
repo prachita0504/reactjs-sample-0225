@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // Eye icons for showing/hiding password
-
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 const Login = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // State for password visibility
+  const [showPassword, setShowPassword] = useState(false); 
   const navigate = useNavigate();
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
@@ -19,7 +18,7 @@ const Login = () => {
     setError("");
 
     try {
-      const response = await axios.post("http://localhost:3000/login", form);
+      const response = await axios.post("https://taskm-2-l0zo.onrender.com/login", form);
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("username", response.data.username);
       navigate("/");
@@ -39,7 +38,7 @@ const Login = () => {
         <h2 className="text-2xl font-bold text-center text-gray-700">Login</h2>
         {error && <p className="text-red-500 text-center">{error}</p>}
         <form className="space-y-4" onSubmit={handleSubmit}>
-          {/* Email Input */}
+          
           <input
             type="email"
             name="email"
@@ -49,10 +48,10 @@ const Login = () => {
             className="w-full p-3 border rounded-lg focus:ring focus:ring-indigo-300"
           />
 
-          {/* Password Input */}
+          
           <div className="relative">
             <input
-              type={showPassword ? "text" : "password"} // Toggle password visibility
+              type={showPassword ? "text" : "password"} 
               name="password"
               placeholder="Password"
               onChange={handleChange}

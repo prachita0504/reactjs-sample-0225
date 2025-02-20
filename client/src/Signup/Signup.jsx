@@ -1,15 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // Eye icons for showing/hiding password
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Signup = () => {
   const [form, setForm] = useState({ username: "", email: "", password: "", confirmPassword: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // State for password visibility
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // State for confirm password visibility
-  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -35,7 +34,7 @@ const Signup = () => {
     setError("");
 
     try {
-      await axios.post("http://localhost:3000/signup", form);
+      await axios.post("https://taskm-2-l0zo.onrender.com/signup", form);
       alert("Signup successful! Please log in.");
       setForm({ username: "", email: "", password: "", confirmPassword: "" }); // Reset form
       navigate("/login");

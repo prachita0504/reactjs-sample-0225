@@ -18,7 +18,7 @@ const Books = () => {
   const fetchBooks = async () => {
     try {
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
-      const { data } = await axios.get("http://localhost:3000/books", { headers });
+      const { data } = await axios.get("https://taskm-2-l0zo.onrender.com/books", { headers });
       setBooks(data);
     } catch (err) {
       setError("Error fetching books!");
@@ -37,7 +37,7 @@ const Books = () => {
     try {
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
       await axios.post(
-        "http://localhost:3000/books",
+        "https://taskm-2-l0zo.onrender.com/books",
         { bookName, description, rating },
         { headers }
       );
@@ -58,7 +58,7 @@ const Books = () => {
   const handleDelete = async (id) => {
     try {
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
-      await axios.delete(`http://localhost:3000/books/${id}`, { headers });
+      await axios.delete(`https://taskm-2-l0zo.onrender.com/books/${id}`, { headers });
       setMessage("Book deleted successfully! ✅");
       fetchBooks();
 
@@ -82,7 +82,7 @@ const Books = () => {
     try {
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
       await axios.put(
-        `http://localhost:3000/books/${id}`,
+        `https://taskm-2-l0zo.onrender.com/books/${id}`,
         { bookName: newTitle, description: newDescription },
         { headers }
       );
@@ -186,3 +186,4 @@ const Books = () => {
 };
 
 export default Books;
+

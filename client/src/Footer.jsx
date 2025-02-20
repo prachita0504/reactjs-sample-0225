@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaTwitter, FaGithub } from "react-icons/fa"; // Ensure react-icons is installed
+import { FaTwitter, FaGithub } from "react-icons/fa";
 
 const Footer = () => {
   return (

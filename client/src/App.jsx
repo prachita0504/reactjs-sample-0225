@@ -11,13 +11,13 @@ import Footer from "./Footer";
 import Dashboard from "./Dashboard/Dashboard"
 
 function App() {
-  const [user, setUser] = useState(""); // Store the logged-in user's username
+  const [user, setUser] = useState(""); // Store the logged-in users username
 
-  // Check if the user is logged in (i.e., if the token exists in localStorage)
+  // Check if the user is logged in 
   useEffect(() => {
     const username = localStorage.getItem("username");
     if (username) {
-      setUser(username); // Set username in state
+      setUser(username); 
     }
   }, []);
 
