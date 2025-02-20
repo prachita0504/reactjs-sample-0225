@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; // ✅ Import useNavigate
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Signup = () => {
@@ -9,6 +9,8 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const navigate = useNavigate(); // ✅ Define navigate
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -24,7 +26,7 @@ const Signup = () => {
       return setError("Email must be a valid Gmail or Yahoo address.");
     }
 
-    //password validation
+    // password validation
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,90}$/;
     if (!passwordRegex.test(form.password)) {
       return setError("Password must contain at least one uppercase letter, one digit, and no special characters.");
@@ -37,7 +39,7 @@ const Signup = () => {
       await axios.post("https://taskm-2-l0zo.onrender.com/signup", form);
       alert("Signup successful! Please log in.");
       setForm({ username: "", email: "", password: "", confirmPassword: "" }); // Reset form
-      navigate("/login");
+      navigate("/login"); // ✅ Now it works correctly
     } catch (error) {
       setError(error.response?.data?.message || error.message || "Error signing up");
     } finally {
