@@ -14,7 +14,8 @@ const cors = require("cors");
 
 const allowedOrigins = [
   "http://localhost:5173",  // Local development
-  "https://task-manager-2ebn2bscm-prachita-singhs-projects.vercel.app"]
+  "https://task-manager-h41d57tck-prachita-singhs-projects.vercel.app", // New Vercel frontend
+];
 
 app.use(
   cors({
