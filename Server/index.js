@@ -13,22 +13,26 @@ const app = express();
 const cors = require("cors");
 
 const allowedOrigins = [
-  "http://localhost:5173",  // Local development
-  "https://task-ruby-one.vercel.app/", // New Vercel frontend
+  "http://localhost:5173",
+  "https://task-ruby-one.vercel.app", // ✅ Corrected
 ];
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log("Blocked by CORS:", origin);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: "GET,POST,PUT,DELETE,OPTIONS",
+}));
+
+
+app.options("*", cors());
+
 
 app.use(express.json());
 
