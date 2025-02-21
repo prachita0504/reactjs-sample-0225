@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 
 const predefinedAvatars = [
   "https://cdn-icons-png.flaticon.com/512/147/147144.png",
@@ -24,13 +23,11 @@ const predefinedAvatars = [
 const UserSettings = () => {
   const [selectedOption, setSelectedOption] = useState("profile");
   const [username, setUsername] = useState("");
-  const [profilePic, setProfilePic] = useState(localStorage.getItem("profilePic") || "/default-avatar.png");
+  const [profilePic, setProfilePic] = useState("");
 
   useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
-    if (storedUsername) {
-      setUsername(storedUsername);
-    }
+    setUsername(localStorage.getItem("username") || "");
+    setProfilePic(localStorage.getItem("profilePic") || "/default-avatar.png");
   }, []);
 
   const handleProfilePicChange = (e) => {
@@ -51,6 +48,10 @@ const UserSettings = () => {
   };
 
   const handleUsernameChange = () => {
+    if (!username.trim()) {
+      alert("Username cannot be empty!");
+      return;
+    }
     localStorage.setItem("username", username);
     alert("Username updated successfully!");
   };
@@ -60,7 +61,7 @@ const UserSettings = () => {
       {/* Sidebar */}
       <div className="w-full md:w-1/4 bg-gray-900 text-white p-6">
         <h2 className="text-xl font-bold mb-6">User Settings</h2>
-        <ul>
+        <ul className="space-y-2">
           <li
             className={`p-2 cursor-pointer hover:bg-gray-700 rounded ${selectedOption === "profile" ? "bg-gray-700" : ""}`}
             onClick={() => setSelectedOption("profile")}
@@ -76,7 +77,7 @@ const UserSettings = () => {
         </ul>
       </div>
 
-
+      {/* Main Content */}
       <div className="w-full md:w-3/4 p-6">
         {selectedOption === "profile" && (
           <div className="bg-white p-6 rounded-lg shadow-md text-center">
@@ -85,7 +86,8 @@ const UserSettings = () => {
               <img src={profilePic} alt="Profile" className="w-32 h-32 rounded-full border-4 border-gray-300 object-cover" />
             </div>
             <label className="block w-fit mx-auto bg-blue-500 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-600">
-              Choose File<input type="file" accept="image/*" onChange={handleProfilePicChange} className="hidden" />
+              Choose File
+              <input type="file" accept="image/*" onChange={handleProfilePicChange} className="hidden" />
             </label>
             <h3 className="text-lg font-bold mt-4">Or Select an Avatar</h3>
             <div className="flex flex-wrap justify-center gap-4 mt-4">
@@ -94,7 +96,9 @@ const UserSettings = () => {
                   key={index}
                   src={avatar}
                   alt="Avatar"
-                  className="w-16 h-16 rounded-full cursor-pointer border-2 border-transparent hover:border-blue-500"
+                  className={`w-16 h-16 rounded-full cursor-pointer border-2 transition ${
+                    profilePic === avatar ? "border-blue-500" : "border-transparent"
+                  } hover:border-blue-500`}
                   onClick={() => handleAvatarSelect(avatar)}
                 />
               ))}
@@ -109,9 +113,12 @@ const UserSettings = () => {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="border p-2 w-full mb-4 rounded"
+              className="border p-2 w-full mb-4 rounded focus:ring-2 focus:ring-blue-400"
             />
-            <button onClick={handleUsernameChange} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            <button
+              onClick={handleUsernameChange}
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+            >
               Save Changes
             </button>
           </div>

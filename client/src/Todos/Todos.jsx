@@ -1,78 +1,74 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL; // ✅ Use API URL from environment variables
+
 const Todos = () => {
   const [task, setTask] = useState("");
   const [body, setBody] = useState("");
   const [tasks, setTasks] = useState([]);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [token] = useState(localStorage.getItem("token"));
+  const [token, setToken] = useState(localStorage.getItem("token"));
 
   useEffect(() => {
-    fetchTodos();
+    if (token) fetchTodos();
   }, [token]);
-
 
   const fetchTodos = async () => {
     try {
-      const { data } = await axios.get("https://taskm-2-l0zo.onrender.com/todos", {
+      const { data } = await axios.get(`${API_URL}/todos`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTasks(data);
+      setError("");
     } catch (err) {
-      setError("Error fetching todos!");
+      setError(err.response?.data?.message || "Error fetching todos!");
       console.error(err);
     }
   };
 
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (task.trim() === "" || body.trim() === "") {
+    if (!task.trim() || !body.trim()) {
       setError("All fields are required!");
       return;
     }
 
     try {
       await axios.post(
-        "https://taskm-2-l0zo.onrender.com/todo",
-        { title: task, body: body },
+        `${API_URL}/todos`,
+        { title: task, body },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setTask("");
       setBody("");
       setMessage("Task added successfully! ✅");
       fetchTodos();
-
       setTimeout(() => setMessage(""), 2000);
     } catch (err) {
-      setError("Error adding task!");
+      setError(err.response?.data?.message || "Error adding task!");
       console.error(err);
     }
   };
 
-  // Delete Todo
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://taskm-2-l0zo.onrender.com/todos/${id}`, {
+      await axios.delete(`${API_URL}/todos/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setMessage("Task deleted successfully! ");
+      setMessage("Task deleted successfully!");
       fetchTodos();
-
       setTimeout(() => setMessage(""), 2000);
     } catch (err) {
-      setError("Error deleting task!");
+      setError(err.response?.data?.message || "Error deleting task!");
       console.error(err);
     }
   };
 
-//update
   const handleUpdate = async (id) => {
     const newTitle = prompt("Enter new task title:");
     const newBody = prompt("Enter new task description:");
-
     if (!newTitle || !newBody) {
       setError("Both fields are required for updating!");
       return;
@@ -80,16 +76,15 @@ const Todos = () => {
 
     try {
       await axios.put(
-        `https://taskm-2-l0zo.onrender.com/todos/${id}`,
+        `${API_URL}/todos/${id}`,
         { title: newTitle, body: newBody },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setMessage("Task updated successfully! ");
+      setMessage("Task updated successfully!");
       fetchTodos();
-
       setTimeout(() => setMessage(""), 2000);
     } catch (err) {
-      setError("Error updating task!");
+      setError(err.response?.data?.message || "Error updating task!");
       console.error(err);
     }
   };
@@ -97,13 +92,13 @@ const Todos = () => {
   const handleCheckboxChange = async (id, isDone) => {
     try {
       await axios.put(
-        `https://taskm-2-l0zo.onrender.com/todos/${id}`,
+        `${API_URL}/todos/${id}`,
         { done: !isDone },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       fetchTodos();
     } catch (err) {
-      setError("Error updating task status!");
+      setError(err.response?.data?.message || "Error updating task status!");
       console.error(err);
     }
   };
@@ -116,7 +111,6 @@ const Todos = () => {
         {message && <p className="text-green-600 text-center font-semibold">{message}</p>}
         {error && <p className="text-red-500 text-center">{error}</p>}
 
-        
         {token ? (
           <form onSubmit={handleSubmit} className="flex flex-col gap-3">
             <input
@@ -141,7 +135,6 @@ const Todos = () => {
         )}
       </div>
 
-      
       <div className="mt-6 flex flex-wrap justify-center gap-9">
         {tasks.map((task) => (
           <div
@@ -174,12 +167,9 @@ const Todos = () => {
             </div>
           </div>
         ))}
-        
       </div>
     </div>
   );
 };
 
 export default Todos;
-
-
