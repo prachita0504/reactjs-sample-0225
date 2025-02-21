@@ -14,7 +14,7 @@ const cors = require("cors");
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://task-ruby-one.vercel.app", // ✅ Corrected
+  "https://task-ruby-one.vercel.app", 
 ];
 
 app.use(cors({
