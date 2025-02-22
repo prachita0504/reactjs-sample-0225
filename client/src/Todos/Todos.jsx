@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL; // ✅ Use API URL from environment variables
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Todos = () => {
   const [task, setTask] = useState("");
@@ -9,7 +9,7 @@ const Todos = () => {
   const [tasks, setTasks] = useState([]);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [token] = useState(localStorage.getItem("token"));
 
   useEffect(() => {
     if (token) fetchTodos();
