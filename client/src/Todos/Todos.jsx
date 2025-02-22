@@ -7,9 +7,8 @@ const Todos = () => {
   const [task, setTask] = useState("");
   const [body, setBody] = useState("");
   const [tasks, setTasks] = useState([]);
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
-  const [token] = useState(localStorage.getItem("token"));
+  const [status, setStatus] = useState({ type: "", message: "" });
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     if (token) fetchTodos();
@@ -21,34 +20,32 @@ const Todos = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTasks(data);
-      setError("");
+      setStatus({ type: "", message: "" });
     } catch (err) {
-      setError(err.response?.data?.message || "Error fetching todos!");
-      console.error(err);
+      setStatus({ type: "error", message: err.response?.data?.message || "Error fetching todos!" });
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!task.trim() || !body.trim()) {
-      setError("All fields are required!");
+      setStatus({ type: "error", message: "All fields are required!" });
       return;
     }
 
     try {
-      await axios.post(
+      const { data } = await axios.post(
         `${API_URL}/todos`,
         { title: task, body },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      setTasks([...tasks, data]);
       setTask("");
       setBody("");
-      setMessage("Task added successfully! ✅");
-      fetchTodos();
-      setTimeout(() => setMessage(""), 2000);
+      setStatus({ type: "success", message: "Task added successfully! ✅" });
+      setTimeout(() => setStatus({ type: "", message: "" }), 2000);
     } catch (err) {
-      setError(err.response?.data?.message || "Error adding task!");
-      console.error(err);
+      setStatus({ type: "error", message: err.response?.data?.message || "Error adding task!" });
     }
   };
 
@@ -57,35 +54,26 @@ const Todos = () => {
       await axios.delete(`${API_URL}/todos/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setMessage("Task deleted successfully!");
-      fetchTodos();
-      setTimeout(() => setMessage(""), 2000);
+      setTasks(tasks.filter((t) => t._id !== id));
+      setStatus({ type: "success", message: "Task deleted successfully!" });
+      setTimeout(() => setStatus({ type: "", message: "" }), 2000);
     } catch (err) {
-      setError(err.response?.data?.message || "Error deleting task!");
-      console.error(err);
+      setStatus({ type: "error", message: err.response?.data?.message || "Error deleting task!" });
     }
   };
 
-  const handleUpdate = async (id) => {
-    const newTitle = prompt("Enter new task title:");
-    const newBody = prompt("Enter new task description:");
-    if (!newTitle || !newBody) {
-      setError("Both fields are required for updating!");
-      return;
-    }
-
+  const handleUpdate = async (id, newTitle, newBody) => {
     try {
       await axios.put(
         `${API_URL}/todos/${id}`,
         { title: newTitle, body: newBody },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setMessage("Task updated successfully!");
-      fetchTodos();
-      setTimeout(() => setMessage(""), 2000);
+      setTasks(tasks.map((t) => (t._id === id ? { ...t, title: newTitle, body: newBody } : t)));
+      setStatus({ type: "success", message: "Task updated successfully!" });
+      setTimeout(() => setStatus({ type: "", message: "" }), 2000);
     } catch (err) {
-      setError(err.response?.data?.message || "Error updating task!");
-      console.error(err);
+      setStatus({ type: "error", message: err.response?.data?.message || "Error updating task!" });
     }
   };
 
@@ -96,20 +84,22 @@ const Todos = () => {
         { done: !isDone },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      fetchTodos();
+      setTasks(tasks.map((t) => (t._id === id ? { ...t, done: !isDone } : t)));
     } catch (err) {
-      setError(err.response?.data?.message || "Error updating task status!");
-      console.error(err);
+      setStatus({ type: "error", message: err.response?.data?.message || "Error updating task status!" });
     }
   };
 
   return (
-    <div className="p-20 bg-black">
-      <div className="max-w-4xl mx-auto mt-16 p-10 bg-gray-100 rounded-lg">
-        <h2 className="text-4xl font-semibold mb-4 text-center text-blue-600">To-Do List</h2>
+    <div className="p-10 bg-black min-h-screen flex flex-col items-center">
+      <div className="max-w-4xl w-full bg-gray-100 p-6 rounded-lg shadow-lg">
+        <h2 className="text-3xl font-semibold mb-4 text-center text-blue-600">To-Do List</h2>
 
-        {message && <p className="text-green-600 text-center font-semibold">{message}</p>}
-        {error && <p className="text-red-500 text-center">{error}</p>}
+        {status.message && (
+          <p className={`text-center ${status.type === "error" ? "text-red-500" : "text-green-600"} font-semibold`}>
+            {status.message}
+          </p>
+        )}
 
         {token ? (
           <form onSubmit={handleSubmit} className="flex flex-col gap-3">
@@ -135,26 +125,26 @@ const Todos = () => {
         )}
       </div>
 
-      <div className="mt-6 flex flex-wrap justify-center gap-9">
+      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
         {tasks.map((task) => (
-          <div
-            key={task._id}
-            className="bg-gray-200 p-6 rounded-lg shadow-md flex items-center justify-between w-[600px]"
-          >
-            <div className="flex-1">
-              <h3 className="font-semibold text-xl">{task.title}</h3>
-              <p className="text-gray-600">{task.body}</p>
+          <div key={task._id} className="bg-gray-200 p-6 rounded-lg shadow-md flex flex-col gap-4">
+            <div>
+              <input
+                type="text"
+                value={task.title}
+                onChange={(e) => handleUpdate(task._id, e.target.value, task.body)}
+                className="text-xl font-semibold w-full border-none bg-transparent focus:ring-0"
+              />
+              <textarea
+                value={task.body}
+                onChange={(e) => handleUpdate(task._id, task.title, e.target.value)}
+                className="text-gray-600 w-full border-none bg-transparent focus:ring-0"
+              />
             </div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => handleUpdate(task._id)}
-                className="bg-yellow-500 text-white px-4 py-2 w-24 rounded-md hover:bg-yellow-600"
-              >
-                Update
-              </button>
+            <div className="flex justify-between items-center">
               <button
                 onClick={() => handleDelete(task._id)}
-                className="bg-red-500 text-white px-4 py-2 w-24 rounded-md hover:bg-red-600"
+                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
               >
                 Delete
               </button>

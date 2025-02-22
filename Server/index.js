@@ -14,8 +14,11 @@ const cors = require("cors");
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://task-ruby-one.vercel.app", 
+  "https://task-ruby-one.vercel.app",
 ];
+
+
+app.use(express.json());
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -34,7 +37,6 @@ app.use(cors({
 app.options("*", cors());
 
 
-app.use(express.json());
 
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -46,9 +48,9 @@ if (!JWT_SECRET) {
 //connect to mongodb
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ Connected to MongoDB"))
+  .then(() => console.log(" Connected to MongoDB"))
   .catch((err) => {
-    console.error("❌ MongoDB connection failed:", err);
+    console.error(" MongoDB connection failed:", err);
     process.exit(1);
   });
 
@@ -115,18 +117,21 @@ app.post("/login", async (req, res) => {
 
 //auth middleware
 const auth = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) return res.status(401).json({ message: "Access denied. Token required." });
-
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.userId = decoded.id;
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!token) {
+      return res.status(401).json({ message: "Access denied. Token required." });
+    }
+
+    req.userId = jwt.verify(token, process.env.JWT_SECRET).id;
     next();
   } catch (error) {
-    console.error("Auth Error:", error);
+    console.error("Auth Error:", error.message);
     res.status(401).json({ message: "Invalid or expired token" });
   }
 };
+
 
 
 app.post("/todo", auth, async (req, res) => {
