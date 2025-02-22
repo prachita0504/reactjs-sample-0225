@@ -10,13 +10,18 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const handleStorageChange = () => {
+    // Function to update state when localStorage changes
+    const updateUserData = () => {
       setUsername(localStorage.getItem("username"));
       setProfilePic(localStorage.getItem("profilePic") || "/default-avatar.png");
     };
 
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
+    updateUserData(); // Ensure it updates on mount
+
+    // Check for localStorage changes every second
+    const interval = setInterval(updateUserData, 1000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const handleLogout = () => {
