@@ -12,26 +12,21 @@ const Book = require("./module/Books");
 const app = express();
 const cors = require("cors");
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://task-ruby-one.vercel.app",
-];
+
 
 
 app.use(express.json());
 
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.log("Blocked by CORS:", origin);
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
-  methods: "GET,POST,PUT,DELETE,OPTIONS",
-}));
+const cors = require("cors");
+
+app.use(
+  cors({
+    origin: "https://task-kc2ketgso-prachita-singhs-projects.vercel.app",
+    methods: "GET,POST,PUT,DELETE",
+    allowedHeaders: "Content-Type,Authorization",
+  })
+);
+
 
 
 app.options("*", cors());
