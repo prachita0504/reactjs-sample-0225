@@ -2,24 +2,17 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
-  const [username, setUsername] = useState(null);
-  const [profilePic, setProfilePic] = useState(null);
+  const [username, setUsername] = useState(localStorage.getItem("username"));
+  const [profilePic, setProfilePic] = useState(
+    localStorage.getItem("profilePic") || "/default-avatar.png"
+  );
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
-  const updateUserInfo = () => {
-    const storedUsername = localStorage.getItem("username");
-    const storedProfilePic = localStorage.getItem("profilePic");
-    setUsername(storedUsername);
-    setProfilePic(storedProfilePic || "/default-avatar.png");
-  };
-
   useEffect(() => {
-    updateUserInfo();
-
-
     const handleStorageChange = () => {
-      updateUserInfo();
+      setUsername(localStorage.getItem("username"));
+      setProfilePic(localStorage.getItem("profilePic") || "/default-avatar.png");
     };
 
     window.addEventListener("storage", handleStorageChange);
@@ -30,9 +23,11 @@ const Navbar = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
     localStorage.removeItem("profilePic");
+
     setUsername(null);
-    setProfilePic(null);
+    setProfilePic("/default-avatar.png");
     setIsSidebarOpen(false);
+
     navigate("/");
   };
 
@@ -41,7 +36,7 @@ const Navbar = () => {
   };
 
   return (
-    <>
+    <div>
       <nav className="bg-gray-800 text-white p-4 shadow-md flex justify-between items-center">
         <div className="flex items-center gap-6">
           <Link
@@ -50,7 +45,6 @@ const Navbar = () => {
           >
             TaskM
           </Link>
-
 
           <button
             onClick={toggleSidebar}
@@ -63,7 +57,6 @@ const Navbar = () => {
         <div className="flex items-center gap-4">
           {username ? (
             <div className="relative flex items-center gap-2 cursor-pointer">
-
               <img
                 src={profilePic}
                 alt="Profile"
@@ -90,12 +83,10 @@ const Navbar = () => {
         </div>
       </nav>
 
-
       <div
         className={`fixed inset-0 z-40 transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           }`}
       >
-
         {isSidebarOpen && (
           <div
             className="fixed inset-0 bg-black opacity-50 cursor-pointer"
@@ -148,9 +139,8 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
 export default Navbar;
-
