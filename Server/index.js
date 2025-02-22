@@ -20,11 +20,12 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "https://task-ruby-one.vercel.app/",
+    origin: "https://task-ruby-one.vercel.app",
     methods: "GET,POST,PUT,DELETE",
     allowedHeaders: "Content-Type,Authorization",
   })
 );
+
 
 
 
