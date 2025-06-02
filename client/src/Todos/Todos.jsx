@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL;
-
 const Todos = () => {
   const [task, setTask] = useState("");
   const [body, setBody] = useState("");
@@ -11,18 +9,17 @@ const Todos = () => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    if (token) fetchTodo();
-  }, [token]);
+    fetchTodo();
+  }, []);
 
   const fetchTodo = async () => {
     try {
-      const { data } = await axios.get(`${API_URL}/todo`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const { data } = await axios.get("https://taskm-2-l0zo.onrender.com/todo", { headers });
       setTasks(data);
-      setStatus({ type: "", message: "" });
     } catch (err) {
-      setStatus({ type: "error", message: err.response?.data?.message || "Error fetching todos!" });
+      setStatus({ type: "error", message: "Error fetching tasks!" });
+      console.error(err);
     }
   };
 
@@ -35,7 +32,7 @@ const Todos = () => {
 
     try {
       const { data } = await axios.post(
-        `${API_URL}/todo`,
+        "https://taskm-2-l0zo.onrender.com/todo",
         { title: task, body },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -51,7 +48,7 @@ const Todos = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${API_URL}/todo/${id}`, {
+      await axios.delete(`https://taskm-2-l0zo.onrender.com/todo/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTasks(tasks.filter((t) => t._id !== id));
@@ -65,7 +62,7 @@ const Todos = () => {
   const handleUpdate = async (id, newTitle, newBody) => {
     try {
       await axios.put(
-        `${API_URL}/todo/${id}`,
+        `https://taskm-2-l0zo.onrender.com/todo/${id}`,
         { title: newTitle, body: newBody },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -80,7 +77,7 @@ const Todos = () => {
   const handleCheckboxChange = async (id, isDone) => {
     try {
       await axios.put(
-        `${API_URL}/todo/${id}`,
+        `https://taskm-2-l0zo.onrender.com/todo/${id}`,
         { done: !isDone },
         { headers: { Authorization: `Bearer ${token}` } }
       );
