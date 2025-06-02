@@ -11,12 +11,12 @@ const Todos = () => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    if (token) fetchTodos();
+    if (token) fetchTodo();
   }, [token]);
 
-  const fetchTodos = async () => {
+  const fetchTodo = async () => {
     try {
-      const { data } = await axios.get(`${API_URL}/todos`, {
+      const { data } = await axios.get(`${API_URL}/todo`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTasks(data);
@@ -35,7 +35,7 @@ const Todos = () => {
 
     try {
       const { data } = await axios.post(
-        `${API_URL}/todos`,
+        `${API_URL}/todo`,
         { title: task, body },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -51,7 +51,7 @@ const Todos = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${API_URL}/todos/${id}`, {
+      await axios.delete(`${API_URL}/todo/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTasks(tasks.filter((t) => t._id !== id));
@@ -65,7 +65,7 @@ const Todos = () => {
   const handleUpdate = async (id, newTitle, newBody) => {
     try {
       await axios.put(
-        `${API_URL}/todos/${id}`,
+        `${API_URL}/todo/${id}`,
         { title: newTitle, body: newBody },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -80,7 +80,7 @@ const Todos = () => {
   const handleCheckboxChange = async (id, isDone) => {
     try {
       await axios.put(
-        `${API_URL}/todos/${id}`,
+        `${API_URL}/todo/${id}`,
         { done: !isDone },
         { headers: { Authorization: `Bearer ${token}` } }
       );

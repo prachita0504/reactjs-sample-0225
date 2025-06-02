@@ -17,19 +17,21 @@ const cors = require("cors");
 
 app.use(express.json());
 
+app.options("*", cors());
 
 app.use(
   cors({
-    origin: "https://task-ruby-one.vercel.app",
-    methods: "GET,POST,PUT,DELETE",
-    allowedHeaders: "Content-Type,Authorization",
+    origin: ["https://task-ruby-one.vercel.app", "http://localhost:5173"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 );
 
 
 
 
-app.options("*", cors());
+
 
 
 
@@ -152,7 +154,7 @@ app.post("/todo", auth, async (req, res) => {
   }
 });
 
-app.get("/todos", auth, async (req, res) => {
+app.get("/todo", auth, async (req, res) => {
   try {
     const todos = await Todo.find({ userId: req.userId });
     res.json(todos);
@@ -163,7 +165,7 @@ app.get("/todos", auth, async (req, res) => {
 });
 
 
-app.delete("/todos/:id", auth, async (req, res) => {
+app.delete("/todo/:id", auth, async (req, res) => {
   try {
     const { id } = req.params;
     const todo = await Todo.findOneAndDelete({ _id: id, userId: req.userId });
@@ -177,7 +179,7 @@ app.delete("/todos/:id", auth, async (req, res) => {
   }
 });
 
-app.put("/todos/:id", auth, async (req, res) => {
+app.put("/todo/:id", auth, async (req, res) => {
   try {
     const { title, body, done } = req.body;
     const updatedTodo = await Todo.findOneAndUpdate(
